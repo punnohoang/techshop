@@ -1,10 +1,14 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Pool } from 'pg';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class ProductsService {
-  constructor(@Inject('DATABASE_POOL') private pool: Pool) {}
-
+  constructor(
+  @Inject('DATABASE_POOL') private pool: Pool,
+  private cloudinaryService: CloudinaryService
+) {}
+  
   async getAll() {
     const result = await this.pool.query('SELECT * FROM products');
     return result.rows;
@@ -19,10 +23,17 @@ export class ProductsService {
   return result.rows[0];
   }
 
-  async create(data: { name: string, price: number, description: string, year: number, image_url: string ,stock: number}) {
+  async create(data: { name: string, price: number, description: string, year: number, stock: number }, file?: Express.Multer.File) {
+
+    let image_url = '';
+
+    if (file) {
+      image_url = await this.cloudinaryService.uploadImage(file);
+    }
+
     const result = await this.pool.query(
       'INSERT INTO products (name, price, description, year, image_url, stock) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-      [data.name, data.price, data.description, data.year, data.image_url, data.stock]
+      [data.name, data.price, data.description, data.year, image_url, data.stock]
     );
     return result.rows[0];
   }

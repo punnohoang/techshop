@@ -1,6 +1,6 @@
-import { Controller, Get, Param, Post, Body,Patch , Delete } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body,Patch , Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { ProductsService } from './products.service';
-
+import { FileInterceptor } from '@nestjs/platform-express';
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
@@ -16,8 +16,12 @@ export class ProductsController {
   }
 
   @Post()
-  create(@Body() data: { name: string, price: number, description: string, year: number, image_url: string ,stock: number }){
-    return this.productsService.create(data);
+  @UseInterceptors(FileInterceptor('image'))
+  async create(
+    @Body() data: {name: string, price: number, description: string, year: number, stock: number },
+    @UploadedFile() file?: Express.Multer.File
+  ) {
+    return this.productsService.create(data, file);
   }
 
   @Patch(':id')
@@ -29,4 +33,6 @@ export class ProductsController {
   delete(@Param('id') id: string){
     return this.productsService.delete(Number(id));
   }
+
+  
 }
