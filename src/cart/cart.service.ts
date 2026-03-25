@@ -34,4 +34,14 @@ export class CartService {
         `, [user_id]);
         return { items: itemsResult.rows };
     }
+
+    async updateCartItem(cart_item_id: number, quantity: number) {
+        const result = await this.pool.query('UPDATE cart_items SET quantity = $1 WHERE id = $2 RETURNING *', [quantity, cart_item_id]);
+        return result.rows[0];
+    }
+
+    async removeCartItem(cart_item_id: number) {
+        await this.pool.query('DELETE FROM cart_items WHERE id = $1', [cart_item_id]);
+        return { success: true };
+    }
 }
