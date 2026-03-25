@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 import { ProductsModule } from './products/products.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { CartModule } from './cart/cart.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     DatabaseModule,
     ProductsModule,
     CloudinaryModule,
+    CartModule,
   ],
   controllers: [AppController],
   providers: [AppService],
