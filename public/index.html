@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>TechShop</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1>🖥️ TechShop</h1>
+        <button onclick="showCart()">🛒 Giỏ hàng (<span id="cart-count">0</span>)</button>
+    </header>
+
+    <main>
+        <h2>Sản phẩm</h2>
+        <div id="products-list"></div>
+    </main>
+
+    <div id="cart-section" style="display:none">
+        <h2>Giỏ hàng</h2>
+        <div id="cart-items"></div>
+        <button onclick="checkout()">Đặt hàng</button>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
