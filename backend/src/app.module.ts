@@ -16,7 +16,7 @@ import { join } from 'path';
       isGlobal: true, // dùng được ở mọi nơi trong app
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
+      rootPath: join(__dirname, '..', '..', 'frontend', 'public'),
     }),
     DatabaseModule,
     ProductsModule,

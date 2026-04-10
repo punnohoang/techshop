@@ -1,0 +1,18 @@
+services:
+  api:
+    build: ./backend
+    container_name: techshop-backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./backend/.env
+    restart: always
+
+  frontend:
+    build: ./frontend
+    container_name: techshop-frontend
+    depends_on:
+      - api
+    ports:
+      - "8080:80"
+    restart: always

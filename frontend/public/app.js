@@ -1,7 +1,7 @@
 async function loadProducts() {
   const productsList = document.getElementById('products-list');
   productsList.innerHTML = '<p>Đang tải sản phẩm...</p>';
-  const response = await fetch('/products');
+  const response = await fetch('/api/products');
   const products = await response.json();
 
   if (!productsList) return;
@@ -20,7 +20,7 @@ async function loadProducts() {
 document.addEventListener('DOMContentLoaded', loadProducts);
 
 async function addToCart(productId) {
-  const response = await fetch('/cart', {
+  const response = await fetch('/api/cart', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -39,7 +39,7 @@ async function addToCart(productId) {
 async function showCart() {
   const cartList = document.getElementById('cart-items');
   cartList.innerHTML = '<p>Đang tải giỏ hàng...</p>';
-  const response = await fetch('/cart/1'); // tạm thời hardcode user_id
+  const response = await fetch('/api/cart/1'); // tạm thời hardcode user_id
   const cartItems = await response.json();
 
   if (!cartList) return;
@@ -60,12 +60,12 @@ async function checkout() {
   if (!address) return;
 
   // Lấy cart_id trước
-  const cartResponse = await fetch('/cart/1');
+  const cartResponse = await fetch('/api/cart/1');
   const cartData = await cartResponse.json();
   const cart_id = cartData.items[0].cart_id;
 
   // Đặt hàng
-  const response = await fetch('/orders', {
+  const response = await fetch('/api/orders', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
