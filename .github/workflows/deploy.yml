@@ -81,7 +81,7 @@ jobs:
       - name: Deploy to GKE
         run: |
           kubectl set image deployment/techshop-backend \
-            techshop-backend=${{ needs.build-push.outputs.image_tag }} \
+            backend=${{ needs.build-push.outputs.image_tag }} \
             -n techshop
           kubectl rollout status deployment/techshop-backend -n techshop --timeout=300s
       - name: Verify deployment
