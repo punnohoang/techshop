@@ -6,9 +6,11 @@ describe('OrdersService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [OrdersService],
+      providers: [
+        OrdersService,
+        { provide: 'DATABASE_POOL', useValue: { query: jest.fn() } },
+      ],
     }).compile();
-
     service = module.get<OrdersService>(OrdersService);
   });
 
