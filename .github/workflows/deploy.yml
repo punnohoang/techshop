@@ -11,6 +11,7 @@ env:
   REGION: asia-southeast1
   CLUSTER_NAME: techshop-cluster
   REGISTRY: asia-southeast1-docker.pkg.dev
+  IMAGE_TAG: ""
 
 jobs:
   test:
@@ -40,7 +41,7 @@ jobs:
       contents: read
       id-token: write
     outputs:
-      image_tag: ${{ steps.meta.outputs.tags }}
+      image_tag: ${{ steps.meta.outputs.image_tag }}
     steps:
       - uses: actions/checkout@v4
       - name: Authenticate to GCP
@@ -52,11 +53,14 @@ jobs:
         run: gcloud auth configure-docker ${{ env.REGISTRY }} --quiet
       - name: Set image tag
         id: meta
-        run: echo "tags=${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/techshop/backend:${{ github.sha }}" >> $GITHUB_OUTPUT
+        run: |
+          IMAGE_TAG="${{ env.REGISTRY }}/${{ secrets.GCP_PROJECT_ID }}/techshop/backend:${{ github.sha }}"
+          echo "image_tag=${IMAGE_TAG}" >> $GITHUB_OUTPUT
+          echo "Image tag: ${IMAGE_TAG}"
       - name: Build & Push backend image
         run: |
-          docker build -t ${{ steps.meta.outputs.tags }} ./backend
-          docker push ${{ steps.meta.outputs.tags }}
+          docker build -t ${{ steps.meta.outputs.image_tag }} ./backend
+          docker push ${{ steps.meta.outputs.image_tag }}
 
   deploy:
     name: Deploy to GKE
