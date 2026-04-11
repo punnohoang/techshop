@@ -1,12 +1,11 @@
+const API_URL = 'https://techshop.punnohoang.me';
+
 async function loadProducts() {
   const productsList = document.getElementById('products-list');
   productsList.innerHTML = '<p>Đang tải sản phẩm...</p>';
-  const response = await fetch('/api/products');
+  const response = await fetch(`${API_URL}/products`);
   const products = await response.json();
-
   if (!productsList) return;
-
-
   productsList.innerHTML = products.map(product => `
   <div>
     <img src="${product.image_url}" />
@@ -15,16 +14,15 @@ async function loadProducts() {
     <button onclick="addToCart(${product.id})">Thêm vào giỏ</button>
   </div>
 `).join('');
-
 }
 document.addEventListener('DOMContentLoaded', loadProducts);
 
 async function addToCart(productId) {
-  const response = await fetch('/api/cart', {
+  const response = await fetch(`${API_URL}/cart`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      user_id: 1,        // tạm thời hardcode
+      user_id: 1,
       product_id: productId,
       quantity: 1
     })
@@ -39,12 +37,10 @@ async function addToCart(productId) {
 async function showCart() {
   const cartList = document.getElementById('cart-items');
   cartList.innerHTML = '<p>Đang tải giỏ hàng...</p>';
-  const response = await fetch('/api/cart/1'); // tạm thời hardcode user_id
-  const cartItems = await response.json();
-
+  const response = await fetch(`${API_URL}/cart/1`);
+  const cartData = await response.json();
   if (!cartList) return;
-
-  cartList.innerHTML = cartItems.items.map(item => `
+  cartList.innerHTML = cartData.items.map(item => `
     <div>
       <img src="${item.image_url}" />
       <h3>${item.name}</h3>
@@ -52,29 +48,19 @@ async function showCart() {
     </div>
   `).join('');
   document.getElementById('cart-section').style.display = 'block';
-
 }
 
 async function checkout() {
   const address = prompt('Nhập địa chỉ giao hàng:');
   if (!address) return;
-
-  // Lấy cart_id trước
-  const cartResponse = await fetch('/api/cart/1');
+  const cartResponse = await fetch(`${API_URL}/cart/1`);
   const cartData = await cartResponse.json();
   const cart_id = cartData.items[0].cart_id;
-
-  // Đặt hàng
-  const response = await fetch('/api/orders', {
+  const response = await fetch(`${API_URL}/orders`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      user_id: 1,
-      cart_id,
-      address
-    })
+    body: JSON.stringify({ user_id: 1, cart_id, address })
   });
-
   if (response.ok) {
     alert('Đặt hàng thành công!');
     document.getElementById('cart-section').style.display = 'none';

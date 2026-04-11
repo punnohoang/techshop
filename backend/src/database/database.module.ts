@@ -9,13 +9,14 @@ import { ConfigService } from '@nestjs/config';
       provide: 'DATABASE_POOL',
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
+        const isProduction = configService.get<string>('NODE_ENV') === 'production';
+        // ✅ Bỏ hoàn toàn option ssl
         return new Pool({
           connectionString: configService.get<string>('DATABASE_URL'),
-          ssl: { rejectUnauthorized: false },
         });
       },
     },
   ],
   exports: ['DATABASE_POOL'],
 })
-export class DatabaseModule {}
+export class DatabaseModule { }

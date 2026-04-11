@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: techshop-ingress
+  namespace: techshop
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: gce
+  tls:
+    - hosts:
+        - techshop.punnohoang.me
+      secretName: techshop-tls
+  rules:
+    - host: techshop.punnohoang.me
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: techshop-backend
+                port:
+                  number: 3000

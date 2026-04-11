@@ -1,23 +1,17 @@
-# 1. Base image là gì?
-FROM node:20-alpine
-
-# 2. Thư mục làm việc
+# ---- Stage 1: Build ----
+FROM node:20-alpine AS builder
 WORKDIR /app
-
-# 3. Copy file gì trước?
 COPY package*.json ./
-
-# 4. Cài dependencies
-RUN npm install
-
-# 5. Copy toàn bộ code
+RUN npm ci
 COPY . .
-
-# 6. Build app
 RUN npm run build
 
-# 7. Mở port
+# ---- Stage 2: Production ----
+FROM node:20-alpine AS production
+WORKDIR /app
+ENV NODE_ENV=production
+COPY package*.json ./
+RUN npm ci --omit=dev
+COPY --from=builder /app/dist ./dist
 EXPOSE 3000
-
-# 8. Chạy app
 CMD ["node", "dist/main"]

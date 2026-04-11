@@ -1,18 +1,47 @@
 services:
+  db:
+    image: postgres:16-alpine
+    container_name: techshop-db
+    restart: always
+    environment:
+      POSTGRES_DB: techshop
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./techshop_init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d techshop"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   api:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: techshop-backend
+    restart: always
     ports:
       - "3000:3000"
     env_file:
       - ./backend/.env
-    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     container_name: techshop-frontend
-    depends_on:
-      - api
+    restart: always
     ports:
       - "8080:80"
-    restart: always
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
