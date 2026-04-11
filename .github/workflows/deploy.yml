@@ -78,11 +78,12 @@ jobs:
         with:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.REGION }}
-      - name: Deploy to GKE
+      - name: Update image and deploy
         run: |
           kubectl set image deployment/techshop-backend \
             backend=${{ needs.build-push.outputs.image_tag }} \
-            -n techshop
+            -n techshop \
+            --record=false
           kubectl rollout status deployment/techshop-backend -n techshop --timeout=300s
       - name: Verify deployment
         run: |
